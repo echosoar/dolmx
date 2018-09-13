@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title><![CDATA[知乎热榜]]></title>
+    <link>https://www.zhihu.com/billboard</link>
+    <description><![CDATA[知乎热榜]]></description>
+    <generator>FeedIamGy</generator>
+    <webMaster>feed.iam.gy</webMaster>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu Sep 13 2018 10:42:34 GMT+0800 (CST)</lastBuildDate>
+    <ttl>3000</ttl>
+  </channel>
+</rss>
