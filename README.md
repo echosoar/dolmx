@@ -12,6 +12,10 @@ It's designed to be as minimal as possible, no devDependencies, run in browser o
 
 ## Usage
 
+```
+npm i dolmx --save
+```
+
 Dolmx exports a single function, which parses a string of XML and returns a javscript Object. Couldn't be simpler.
 
 
