@@ -7,33 +7,34 @@ function trimQuote(str) {
 }
 
 function formatAttr(attr) {
-  let attrObj = {};
-  trimStr(attr).split(/['"]\s+/).map(item => {
-    item = trimStr(item);
+  const attrObj = {};
+  trimStr(attr).split(/['"]\s+/).forEach(itemOrigin => {
+    const item = trimStr(itemOrigin);
     if (!item) return;
-    let tmp = item.split(/=['"]/);
-    let key = trimStr(tmp[0]);
+    const tmp = item.split(/=['"]/);
+    const key = trimStr(tmp[0]);
     if (!key) return;
     attrObj[key] = trimQuote(tmp[1]) || true;
   });
   return attrObj;
 }
 
-export default function dolmx(xmlstr) {
-  let reg = /^<\??([a-z][\w\.\-]*)(\s[^>]*?)?[\/\?]>|^<([a-z][\w\.\-]*)(\s.*?)?>((?:(?!<\3).)*)<\/\3>|^<([\w\-]+)(\s+.*?)?>((?:<\6.*?<\/\6>|<\6[^>]*?\/>|(?:(?!<\6).)*)*)<\/\6>/igm,
-      isValueReg = /^<!\[CDATA\[(.*?)\]\]>$/im,
-      mached,
-      key,
-      child,
-      result = {};
+export default function dolmx(xmlstring) {
+  const reg = /^<\??([a-z][\w\.\-]*)(\s[^>]*?)?[\/\?]>|^<([a-z][\w\.\-]*)(\s.*?)?>((?:(?!<\3).)*)<\/\3>|^<([\w\-]+)(\s+.*?)?>((?:<\6.*?<\/\6>|<\6[^>]*?\/>|(?:(?!<\6).)*)*)<\/\6>/igm;
+  const isValueReg = /^<!\[CDATA\[(.*?)\]\]>$/im;
+  const result = {};
+  let mached;
+  let key;
+  let child;
+  let xmlstr = xmlstring;
 
   xmlstr = xmlstr.replace(/\s*\n+\s*/gm, '');
 
   if (!/^</.test(xmlstr)) return { _value: xmlstr };
 
   if (isValueReg.test(xmlstr)) return { _value: xmlstr.replace(isValueReg, '$1') };
-
-  while(mached = reg.exec(xmlstr)) {
+  mached = reg.exec(xmlstr);
+  while(mached) {
     xmlstr = xmlstr.substring(0, mached.index) + xmlstr.substring(mached.index +  mached[0].length);
     reg.lastIndex = 0;
 
@@ -59,6 +60,7 @@ export default function dolmx(xmlstr) {
     } else {
       result[key] = child;
     }
+    mached = reg.exec(xmlstr);
   }
   return result;
 }
