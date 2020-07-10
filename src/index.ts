@@ -1,30 +1,12 @@
-function trimStr(str) {
-  return (str || '').replace(/^([^\w]|\s)+/g, '').replace(/([^\w]|\s)+$/g, '')
-}
+import { trimStr, formatAttr } from './utils';
 
-function trimQuote(str) {
-  return trimStr(str).replace(/^("|')(.*)\1$/, '$2');
-}
-
-function formatAttr(attr) {
-  const attrObj = {};
-  trimStr(attr).split(/['"]\s+/).forEach(itemOrigin => {
-    const item = trimStr(itemOrigin);
-    if (!item) return;
-    const tmp = item.split(/=['"]/);
-    const key = trimStr(tmp[0]);
-    if (!key) return;
-    attrObj[key] = trimQuote(tmp[1]) || true;
-  });
-  return attrObj;
-}
-
-export default function dolmx(xmlstring) {
-  const reg = /^<\??([a-z][\w\:\.\-]*)(\s[^>]*?)?[\/\?]>|^<([a-z][\w\.\-]*)(\s.*?)?>((?:(?!<\3).)*)<\/\3>|^<([\w\-]+)(\s+.*?)?>((?:<\6.*?<\/\6>|<\6[^>]*?\/>|(?:(?!<\6).)*)*)<\/\6>/igm;
+const dolmx = (xmlstring: string) => {
+  const reg = /^<\??([a-z][\w\:\.\-]*)(\s[^>]*?)?[\/\?]>/igm;
+  // |^<([a-z][\w\.\-]*)(\s.*?)?>((?:(?!<\3).)*)<\/\3>|^<([\w\-]+)(\s+.*?)?>((?:<\6.*?<\/\6>|<\6[^>]*?\/>|(?:(?!<\6).)*)*)<\/\6>
   const isValueReg = /^<!\[CDATA\[(.*?)\]\]>$/im;
   const result = {};
   let mached;
-  let key;
+  let key: string;
   let child;
   let xmlstr = xmlstring;
 
@@ -39,17 +21,26 @@ export default function dolmx(xmlstring) {
     reg.lastIndex = 0;
 
     if (mached[1]) {
+      // Reg: ^<\??([a-z][\w\:\.\-]*)(\s[^>]*?)?[\/\?]>
+      // Match: <?xml version="1.0" encoding="UTF-8"?>
       key = trimStr(mached[1]);
+      console.log('mached[2]', mached[2]);
       child = { _attr: formatAttr(mached[2]) };
     } else if (mached[3]) {
+      // Reg: ^<([a-z][\w\.\-]*)(\s.*?)?>((?:(?!<\3).)*)<\/\3>
+      // Match: <text><aaa /></text>
       key = trimStr(mached[3]);
       child = {};
-      if (mached[5]) child = dolmx(mached[5]);
+      if (mached[5]) {
+        child = dolmx(mached[5]);
+      }
       child._attr = formatAttr(mached[4]);
     } else if (mached[6]) {
       key = trimStr(mached[6]);
       child = {};
-      if (mached[8]) child = dolmx(mached[8]);
+      if (mached[8]) {
+        child = dolmx(mached[8]);
+      }
       child._attr = formatAttr(mached[7]);
     }
     if (result[key]) {
@@ -64,3 +55,5 @@ export default function dolmx(xmlstring) {
   }
   return result;
 }
+
+export default dolmx;
