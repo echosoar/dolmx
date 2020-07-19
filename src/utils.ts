@@ -1,20 +1,12 @@
-type StringFun = (str: string) => string;
-
-export const trimStr: StringFun = (str: string) => {
-  return str.trim();
+export const error = (errorMessage) => {
+  throw new Error(errorMessage);
 };
 
-export const trimQuote: StringFun = (str: string) => {
-  if (!str) {
-    return '';
-  }
-  return trimStr(str).replace(/^("|')/, '').replace(/("|')$/, '');
-};
-
-export const formatAttr = (attr: string) => {
+export const formatAttr = (attr: string[]) => {
   const attrObj = {};
-  // 去除开头空格
-  attr = trimStr(attr);
+  if (!attr || !attr.length) {
+    return attrObj;
+  }
   let key = '';
   let value;
   let matchKey = true;
@@ -25,16 +17,16 @@ export const formatAttr = (attr: string) => {
         continue;
       } else if (char === '=') {
         if (!key) {
-          throw new Error('xml property name cannot is empty');
+          error('xml property name cannot is empty');
         }
         attrObj[key] = true;
         matchKey = false;
       } else {
         if (!key && !/[a-z_]/i.test(char)) {
-          throw new Error('xml property name must be start with a-z or _');
+          error('xml property name must be start with a-z or _');
         }
         if (!/[\w-]/i.test(char)) {
-          throw new Error('xml property name must be use a-z/0-9/-/_');
+          error('xml property name must be use a-z/0-9/-/_');
         }
         key += char;
       }
@@ -44,7 +36,7 @@ export const formatAttr = (attr: string) => {
           valueSplit = char;
           value = '';
         } else if (char !== ' ') {
-          throw new Error('xml property value must be start with \' or "');
+          error('xml property value must be start with \' or "');
         }
       } else {
         if (char === valueSplit) {
