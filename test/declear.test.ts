@@ -3,8 +3,8 @@ import dolmx from '../src';
 describe('/test/index.test.ts', () => {
   it('declare', async () => {
     const result: any = dolmx(`<?xml version="1.0" encoding="UTF-8"?>`);
-    assert(result.xml[0]._attr.version === '1.0');
-    assert(result.xml[0]._attr.encoding === 'UTF-8');
+    assert(result.xml._attr.version === '1.0');
+    assert(result.xml._attr.encoding === 'UTF-8');
   });
   it('declare error', async () => {
     try {
@@ -15,6 +15,6 @@ describe('/test/index.test.ts', () => {
   });
   it('declare property with space', async () => {
     const result: any = dolmx(`<?xml version = " 1.0 "?>`);
-    assert(result.xml[0]._attr.version === ' 1.0 ');
+    assert(result.xml._attr.version === ' 1.0 ');
   });
 });

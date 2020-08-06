@@ -13,7 +13,7 @@ export const formatAttr = (attr: string[]) => {
   let valueSplit = '';
   for (const char of attr) {
     if (matchKey) {// 英文、数字、减号、下划线、和英文句
-      if (char === ' ') {
+      if (char === ' ' || char === '\n' || char === '\t') {
         continue;
       } else if (char === '=') {
         if (!key) {
@@ -23,9 +23,9 @@ export const formatAttr = (attr: string[]) => {
         matchKey = false;
       } else {
         if (!key && !/[a-z_]/i.test(char)) {
-          error('xml property name must be start with a-z or _');
+          error('xml property name must be start with a-z or _, but current is ' + char);
         }
-        if (!/[\w-]/i.test(char)) {
+        if (!/[\w-:]/i.test(char)) {
           error('xml property name must be use a-z/0-9/-/_');
         }
         key += char;
