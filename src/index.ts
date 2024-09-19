@@ -12,9 +12,7 @@ const dolmx = (xml: string) => {
   outer:
   while (index < xmlChars.length) {
     const current = xmlChars[index];
-   
     if (current === '<') {
-      
       if (xmlChars[index + 1] === '/') { // 完结
         index += 2;
         const currentElementNameLength = pointer.name.length;
@@ -25,7 +23,6 @@ const dolmx = (xml: string) => {
         if (nextCharList !== pointer.name) {
           error('Element need close');
         }
-        
         index += currentElementNameLength;
         let next = xmlChars[index];
         while (next === ' ') {
@@ -42,7 +39,7 @@ const dolmx = (xml: string) => {
         index += 9;
         // value
         let valueEndIndex = -1;
-        for(let start = index; start < xmlChars.length; start++) {
+        for (let start = index; start < xmlChars.length; start++) {
           if (xmlChars[start] === ']' && xmlChars[start + 1] === ']' && xmlChars[start + 2] === '>') {
             valueEndIndex = start;
             break;
@@ -52,7 +49,7 @@ const dolmx = (xml: string) => {
           error('CDATA need close');
         }
         const cdata = xmlChars.slice(index, valueEndIndex).join('');
-        
+
         pointer.value(cdata, true);
         // remove ]]>
         index = valueEndIndex + 3;
