@@ -8,50 +8,61 @@ const dolmx = (xml: string) => {
   const xmlChars = xml.split('');
   const result = new Element();
   let pointer: any = result;
-  while (xmlChars && xmlChars.length) {
-    const current = xmlChars.shift();
-
+  let index = 0;
+  outer:
+  while (index < xmlChars.length) {
+    const current = xmlChars[index];
     if (current === '<') {
-      if (xmlChars[0] === '/') { // 完结
-        xmlChars.shift();
+      if (xmlChars[index + 1] === '/') { // 完结
+        index += 2;
         const currentElementNameLength = pointer.name.length;
         if (!currentElementNameLength) {
           error('Element need name');
         }
-        const nextCharList = xmlChars.splice(0, currentElementNameLength).join('');
+        const nextCharList = xmlChars.slice(index, index + currentElementNameLength).join('');
         if (nextCharList !== pointer.name) {
           error('Element need close');
         }
-        let next = xmlChars.shift();
+        index += currentElementNameLength;
+        let next = xmlChars[index];
         while (next === ' ') {
-          next = xmlChars.shift();
+          index++;
+          next = xmlChars[index];
         }
         if (next !== '>') {
           error(`Element end need </${pointer.name}>, ${next}`);
         }
+        index++;
         pointer = pointer.end();
-      } else if (xmlChars[0] === '!' && xmlChars.slice(0, 8).join('') === '![CDATA[') {
-        xmlChars.splice(0, 8);
+        continue outer;
+      } else if (xmlChars[index + 1] === '!' && xmlChars.slice(index + 1, index + 9).join('') === '![CDATA[') {
+        index += 9;
         // value
-        const valueIndex = xmlChars.findIndex((value, index) => {
-          return value === ']' && xmlChars[index + 1] === ']' && xmlChars[index + 2] === '>';
-        });
-        if (valueIndex === -1) {
+        let valueEndIndex = -1;
+        for (let start = index; start < xmlChars.length; start++) {
+          if (xmlChars[start] === ']' && xmlChars[start + 1] === ']' && xmlChars[start + 2] === '>') {
+            valueEndIndex = start;
+            break;
+          }
+        }
+        if (valueEndIndex === -1) {
           error('CDATA need close');
         }
-        const cdata = xmlChars.splice(0, valueIndex).join('');
+        const cdata = xmlChars.slice(index, valueEndIndex).join('');
+
         pointer.value(cdata, true);
         // remove ]]>
-        xmlChars.splice(0, 3);
+        index = valueEndIndex + 3;
+        continue outer;
       } else { // 新建
-        if (xmlChars[0] === '?') {
-          xmlChars.shift(); // <?xml
+        if (xmlChars[index + 1] === '?') {
+          index++; // <?xml
         }
         pointer = new Element(pointer);
       }
     } else if (current === '/' || current === '?') {
-      if (xmlChars[0] === '>') {
-        xmlChars.shift();
+      if (xmlChars[index + 1] === '>') {
+        index++;
         pointer = pointer.end();
       } else {
         pointer.value(current);
@@ -69,6 +80,7 @@ const dolmx = (xml: string) => {
     } else if (pointer.value) {
       pointer.value(current);
     }
+    index++;
   }
   return result.toObject();
 };
