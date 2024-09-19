@@ -73,7 +73,7 @@ console.log(JSON.stringify(obj, null, '\t'));
         "_value": "知乎热榜"
       },
       "link": {
-        "_value": "https:www.zhihu.combillboard"
+        "_value": "https://www.zhihu.com/billboard"
       },
       "description": {
         "_value": "知乎热榜"
@@ -104,10 +104,10 @@ console.log(JSON.stringify(obj, null, '\t'));
           "_value": "Thu, 13 Sep 2018 02:42:32 GMT"
         },
         "guid": {
-          "_value": "https:www.zhihu.comquestion294345168"
+          "_value": "https://www.zhihu.com/question/294345168"
         },
         "link": {
-          "_value": "https:www.zhihu.comquestion294345168"
+          "_value": "https://www.zhihu.com/question/294345168"
         }
       }
     },

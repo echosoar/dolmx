@@ -13,9 +13,12 @@
     "stripInternal": true,
     "pretty": true,
     "declaration": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
     "outDir": "dist",
     "lib": ["es2018"]
   },
+  "types": [],
   "exclude": [
     "dist",
     "node_modules",

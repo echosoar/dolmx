@@ -53,6 +53,8 @@ const dolmx = (xml: string) => {
       if (xmlChars[0] === '>') {
         xmlChars.shift();
         pointer = pointer.end();
+      } else {
+        pointer.value(current);
       }
     } else if (current === '>') {
       pointer.status = ElementStatue.MatchValue;
