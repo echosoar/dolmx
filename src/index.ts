@@ -9,10 +9,12 @@ const dolmx = (xml: string) => {
   const result = new Element();
   let pointer: any = result;
   let index = 0;
+  outer:
   while (index < xmlChars.length) {
     const current = xmlChars[index];
-
+   
     if (current === '<') {
+      
       if (xmlChars[index + 1] === '/') { // 完结
         index += 2;
         const currentElementNameLength = pointer.name.length;
@@ -23,6 +25,7 @@ const dolmx = (xml: string) => {
         if (nextCharList !== pointer.name) {
           error('Element need close');
         }
+        
         index += currentElementNameLength;
         let next = xmlChars[index];
         while (next === ' ') {
@@ -34,25 +37,31 @@ const dolmx = (xml: string) => {
         }
         index++;
         pointer = pointer.end();
+        continue outer;
       } else if (xmlChars[index + 1] === '!' && xmlChars.slice(index + 1, index + 9).join('') === '![CDATA[') {
         index += 9;
         // value
-        const valueIndex = xmlChars.slice(index).findIndex((value, idx) => {
-          return value === ']' && xmlChars[index + idx + 1] === ']' && xmlChars[index + idx + 2] === '>';
-        });
-        if (valueIndex === -1) {
+        let valueEndIndex = -1;
+        for(let start = index; start < xmlChars.length; start++) {
+          if (xmlChars[start] === ']' && xmlChars[start + 1] === ']' && xmlChars[start + 2] === '>') {
+            valueEndIndex = start;
+            break;
+          }
+        }
+        if (valueEndIndex === -1) {
           error('CDATA need close');
         }
-        const cdata = xmlChars.slice(index, index + valueIndex).join('');
+        const cdata = xmlChars.slice(index, valueEndIndex).join('');
+        
         pointer.value(cdata, true);
         // remove ]]>
-        index += valueIndex + 3;
+        index = valueEndIndex + 3;
+        continue outer;
       } else { // 新建
         if (xmlChars[index + 1] === '?') {
           index++; // <?xml
         }
         pointer = new Element(pointer);
-        index++;
       }
     } else if (current === '/' || current === '?') {
       if (xmlChars[index + 1] === '>') {
