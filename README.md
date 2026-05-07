@@ -57,7 +57,7 @@ let xml = `
 </rss>
 `;
 
-let obj = Dolmx(data);
+let obj = dolmx(data);
 console.log(JSON.stringify(obj, null, '\t'));
 /*
 {

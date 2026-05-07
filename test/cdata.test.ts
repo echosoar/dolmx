@@ -40,10 +40,11 @@ describe('/test/cdata.test.ts', () => {
       </channel>
     </rss>
     `);
-    console.log(JSON.stringify(result, null, 2));
     assert(result.rss.channel.title._value === '知乎热榜');
     assert(result.rss.channel.link._value === 'https://www.zhihu.com/billboard');
     assert(result.rss.channel.description._value === '知乎热榜');
     assert(result.rss.channel.item.title._value === '苹果公司 2018 年 9 月 12 日举办的秋季发布会有哪些亮点和槽点？');
+    assert(result.rss.channel.item.description._value === '在过去的 10 年里，iOS 一点点成长为了苹果最重要的现金牛');
+    assert(result.rss.channel.item.link._value === 'https://www.zhihu.com/question/294345168');
   });
 });
